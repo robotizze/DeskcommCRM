@@ -16,7 +16,12 @@ describe("distribuição própria do Aquila Imob", () => {
       expect(compose).toContain(`ghcr.io/robotizze/${nome}:\${AQUILA_VERSION:-0.1.0}`);
       expect(workflow).toContain(`name: ${nome}`);
     }
-    expect(compose).not.toContain("ghcr.io/melgarafael/");
+    const namespaceBase = readFileSync(
+      join(raiz, "hostgator-setup-kit", "_common.sh"),
+      "utf8",
+    ).match(/^IMG_NS="([^"]+)"/m)?.[1];
+    expect(namespaceBase).toBeTruthy();
+    expect(compose).not.toContain(`${namespaceBase}/`);
     expect(compose.match(/build: !reset null/g)).toHaveLength(2);
     expect(compose).not.toContain("ports:");
   });

@@ -4,6 +4,7 @@ import { audit, isServiceRoleConfigured } from "@/lib/audit";
 import { moduloLigado } from "@/lib/instalacao/modulos";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
+import { rotuloDoContato, type ContatoNomeavel } from "@/lib/contacts/rotulo-do-contato";
 import { esquemas, esquemasParciais } from "./schemas";
 import type {
   ContextoImobiliario,
@@ -38,6 +39,7 @@ const TABELAS = {
   visitas: "imob_visitas",
 } as const;
 const CAMPOS_CATALOGO = "id,codigo,nome,descricao,preco_cents,moeda,imagem_url,ativo";
+const CAMPOS_CONTATO = "id,name,display_name,phone_number";
 const ACOES = {
   imoveis: "imobiliaria.imovel_salvo",
   corretores: "imobiliaria.corretor_salvo",
@@ -143,7 +145,7 @@ export async function contextoImobiliario(
   const [contatos, agendamentos, nomes] = await Promise.all([
     db
       .from("contacts")
-      .select("id,display_name")
+      .select(CAMPOS_CONTATO)
       .eq("organization_id", organizationId)
       .eq("is_anonymized", false)
       .is("is_merged_into", null)
@@ -163,9 +165,9 @@ export async function contextoImobiliario(
   falha(contatos.error);
   falha(agendamentos.error);
   return {
-    contatos: (contatos.data ?? []).map((c: { id: string; display_name: string | null }) => ({
+    contatos: (contatos.data ?? []).map((c: { id: string } & ContatoNomeavel) => ({
       id: c.id,
-      name: c.display_name ?? "Contato",
+      name: rotuloDoContato(c),
     })),
     membros: [...nomes].map(([user_id, nome]) => ({ user_id, nome })),
     agendamentos: agendamentos.data ?? [],
@@ -225,10 +227,10 @@ export async function listarRegistros(
       db,
       organizationId,
       "contacts",
-      "id,display_name",
+      CAMPOS_CONTATO,
       linhas.map((l) => l.contact_id),
     );
-    const mapa = new Map(contatos.map((c) => [c.id, c.display_name]));
+    const mapa = new Map(contatos.map((c) => [c.id, rotuloDoContato(c as ContatoNomeavel)]));
     return linhas.map(
       (l) =>
         ({
@@ -267,10 +269,10 @@ export async function listarRegistros(
     db,
     organizationId,
     "contacts",
-    "id,display_name",
+    CAMPOS_CONTATO,
     agendas.map((a) => a.contact_id),
   );
-  const contato = new Map(contatos.map((c) => [c.id, c.display_name]));
+  const contato = new Map(contatos.map((c) => [c.id, rotuloDoContato(c as ContatoNomeavel)]));
   return linhas
     .filter((l) => agenda.has(l.appointment_id as string))
     .map((l) => {

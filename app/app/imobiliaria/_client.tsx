@@ -473,15 +473,17 @@ export function ImobiliariaClient({
                       <Vazio
                         titulo={
                           busca
-                            ? "Nenhum imóvel encontrado"
+                            ? t("Nenhum imóvel encontrado")
                             : somenteCaptacao
-                              ? "Nenhuma captação em andamento"
-                              : "Sua carteira começa aqui"
+                              ? t("Nenhuma captação em andamento")
+                              : t("Sua carteira começa aqui")
                         }
                         descricao={
                           busca
-                            ? "Ajuste a busca para localizar um imóvel."
-                            : "Cadastre os imóveis da equipe ou registre uma nova captação com responsável e próximo contato."
+                            ? t("Ajuste a busca para localizar um imóvel.")
+                            : t(
+                                "Cadastre os imóveis da equipe ou registre uma nova captação com responsável e próximo contato.",
+                              )
                         }
                       >
                         {podeGerenciar && <Button onClick={abrirCriacao}>{rotuloCriar}</Button>}
@@ -557,8 +559,8 @@ export function ImobiliariaClient({
                       <Vazio
                         titulo={
                           busca
-                            ? "Nenhum interessado encontrado"
-                            : "Conheça o que cada interessado procura"
+                            ? t("Nenhum interessado encontrado")
+                            : t("Conheça o que cada interessado procura")
                         }
                         descricao={t(
                           "Vincule um contato, registre orçamento e preferências e defina o próximo passo do atendimento.",
@@ -634,7 +636,7 @@ export function ImobiliariaClient({
                     {corretores.length === 0 ? (
                       <Vazio
                         titulo={
-                          busca ? "Nenhum corretor encontrado" : "Conecte a equipe à operação"
+                          busca ? t("Nenhum corretor encontrado") : t("Conecte a equipe à operação")
                         }
                         descricao={t(
                           "Vincule integrantes da equipe ao cadastro de corretores para distribuir imóveis e interessados.",

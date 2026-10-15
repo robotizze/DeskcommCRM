@@ -40,6 +40,7 @@ Artefatos preparados:
 | `infra/aquila/Caddyfile.hyper-supabase`    | Bloco alternativo com as seis superfícies do Supabase próprio.                          |
 | `infra/aquila/install-hyper.sh`            | Primeiro deploy privado, com verificações e recibos de cada etapa.                      |
 | `infra/aquila/prepare-hyper-env.py`        | Geração de ambiente e credenciais privados, sem imprimir ou trocar segredos existentes. |
+| `infra/aquila/activate-hyper-proxy.sh`     | Valida e acrescenta o bloco no Caddy existente, com backup e restauração se falhar.     |
 
 Nenhum desses arquivos foi aplicado à Hyper como parte da inspeção. A publicação
 das imagens e o banco próprio precisam estar prontos antes de iniciar o app.
@@ -105,7 +106,7 @@ instalados; não instala dependências globais nem reinicia Docker.
 ```bash
 cd /srv/aquila/imob
 bash infra/aquila/install-hyper.sh --plan
-bash infra/aquila/install-hyper.sh --apply --version 0.1.0 --owner-email superadmin@robotizze.us
+sudo bash infra/aquila/install-hyper.sh --apply --version 0.1.0 --owner-email superadmin@robotizze.us
 ```
 
 `--plan` apenas descreve o procedimento. Após revisão, `--apply` verifica e
@@ -167,6 +168,22 @@ Valide o arquivo completo com `caddy validate` no container antes de recarregar.
 Faça uma recarga do Caddy, sem recriar o container ou seus volumes. A conexão
 adicional da rede também deve entrar na configuração que mantém o proxy, para
 persistir numa futura recriação.
+
+O script preparado faz essa etapa após o app privado estar pronto:
+
+```bash
+bash infra/aquila/activate-hyper-proxy.sh --plan
+sudo bash infra/aquila/activate-hyper-proxy.sh --apply
+```
+
+Ele lê os quatro arquivos Compose vigentes em
+`/home/newxai9_gmail_com/aquila3/config`, com `.env.hyper`; não imprime o ambiente
+resolvido. Guarda backups privados, valida os dois candidatos antes de tocar
+arquivos ativos, persiste a rede nova em `compose.public.yaml` e recarrega o
+Caddy. Mantém o inode do Caddyfile, por causa do bind mount. Se a recarga ou a
+comparação dos quatro domínios falhar, restaura os arquivos e recarrega a
+configuração anterior. Não recria o proxy nem os containers existentes. A
+emissão do certificado e a prova do novo HTTPS seguem a configuração do DNS.
 
 ## Provar e recuperar
 
