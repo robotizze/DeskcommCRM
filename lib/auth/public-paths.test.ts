@@ -9,6 +9,15 @@ import { describe, it, expect } from "vitest";
 import { isPublicPath } from "@/lib/auth/public-paths";
 
 describe("isPublicPath", () => {
+  it("permite o catálogo Aquila e somente pacotes com hash completo", () => {
+    expect(isPublicPath("/extensoes/catalogo.json")).toBe(true);
+    expect(isPublicPath(`/packages/${"a".repeat(64)}.json`)).toBe(true);
+    expect(isPublicPath("/packages/segredo.json")).toBe(false);
+    expect(isPublicPath(`/packages/${"a".repeat(64)}.json/extra`)).toBe(false);
+    expect(isPublicPath("/extensoes/catalogo.json/extra")).toBe(false);
+    expect(isPublicPath("/api/v1/imobiliaria/imoveis")).toBe(false);
+  });
+
   it("libera o heartbeat do agente do host (bearer, sem cookie)", () => {
     expect(isPublicPath("/api/v1/system/agent")).toBe(true);
   });

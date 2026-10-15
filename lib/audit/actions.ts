@@ -1138,6 +1138,10 @@ export const AUDIT_ACTIONS = [
   // A marca foi removida: só limpa `ai_opt_out`; a conversa segue com a trava
   // de handoff de quem a pôs.
   "contacts.always_human_unmarked",
+  "imobiliaria.imovel_salvo",
+  "imobiliaria.corretor_salvo",
+  "imobiliaria.interessado_salvo",
+  "imobiliaria.visita_salva",
 ] as const;
 
 /** Um código de auditoria. Derivado de `AUDIT_ACTIONS` — não redigite a lista. */

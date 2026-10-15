@@ -1,31 +1,48 @@
 {
+  "aquila/carteira-e-captacao": {
+    "publisher_label": "Aquila Imob",
+    "homepage": "https://imob.aquila.ia.br",
+    "repository": "https://github.com/robotizze/DeskcommCRM",
+    "tags": ["imobiliaria", "imoveis", "captacao"],
+    "published_at": "2026-10-15"
+  },
+  "aquila/interessados-e-qualificacao": {
+    "publisher_label": "Aquila Imob",
+    "homepage": "https://imob.aquila.ia.br",
+    "repository": "https://github.com/robotizze/DeskcommCRM",
+    "tags": ["imobiliaria", "interessados", "qualificacao"],
+    "published_at": "2026-10-15"
+  },
+  "aquila/visitas-e-retornos": {
+    "publisher_label": "Aquila Imob",
+    "homepage": "https://imob.aquila.ia.br",
+    "repository": "https://github.com/robotizze/DeskcommCRM",
+    "tags": ["imobiliaria", "visitas", "agenda"],
+    "published_at": "2026-10-15"
+  },
+  "aquila/corretores-e-operacao": {
+    "publisher_label": "Aquila Imob",
+    "homepage": "https://imob.aquila.ia.br",
+    "repository": "https://github.com/robotizze/DeskcommCRM",
+    "tags": ["imobiliaria", "corretores", "equipe"],
+    "published_at": "2026-10-15"
+  },
   "deskcomm/retorno-de-paciente": {
     "publisher_label": "Deskcomm",
     "repository": "https://github.com/melgarafael/DeskcommCRM",
-    "tags": [
-      "clinica",
-      "retorno",
-      "agenda"
-    ],
+    "tags": ["clinica", "retorno", "agenda"],
     "published_at": "2026-09-18"
   },
   "deskcomm/carrinho-abandonado": {
     "publisher_label": "Deskcomm",
     "repository": "https://github.com/melgarafael/DeskcommCRM",
-    "tags": [
-      "ecommerce",
-      "vendas",
-      "recuperacao"
-    ],
+    "tags": ["ecommerce", "vendas", "recuperacao"],
     "published_at": "2026-09-18"
   },
   "deskcomm/primeira-semana": {
     "publisher_label": "Deskcomm",
     "repository": "https://github.com/melgarafael/DeskcommCRM",
-    "tags": [
-      "equipe",
-      "treinamento"
-    ],
+    "tags": ["equipe", "treinamento"],
     "published_at": "2026-09-18"
   }
 }

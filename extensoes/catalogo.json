@@ -1,7 +1,150 @@
 {
   "format_version": 1,
-  "origin": "https://extensoes.deskcomm.com.br",
+  "origin": "https://imob.aquila.ia.br",
   "entries": [
+    {
+      "publisher": "aquila",
+      "name": "carteira-e-captacao",
+      "version": "1.0.0",
+      "license": "MIT",
+      "host_api": {
+        "min": 2,
+        "max": 2
+      },
+      "display": {
+        "title": {
+          "pt-BR": "Carteira e captação de imóveis"
+        },
+        "summary": {
+          "pt-BR": "Da conversa com o proprietário ao imóvel disponível: registre a autorização, confira a ficha e defina quem conduz a próxima etapa."
+        },
+        "category": "sales",
+        "icon": "ListChecks"
+      },
+      "permissions": [
+        "navigation.imobiliaria",
+        "navigation.contacts"
+      ],
+      "sha256": "f28b25b2f5d79454d72156a946ba5342b80c17e116731b911fa708eb912b96d6",
+      "byte_length": 3494,
+      "publisher_label": "Aquila Imob",
+      "homepage": "https://imob.aquila.ia.br",
+      "repository": "https://github.com/robotizze/DeskcommCRM",
+      "tags": [
+        "imobiliaria",
+        "imoveis",
+        "captacao"
+      ],
+      "published_at": "2026-10-15"
+    },
+    {
+      "publisher": "aquila",
+      "name": "corretores-e-operacao",
+      "version": "1.0.0",
+      "license": "MIT",
+      "host_api": {
+        "min": 2,
+        "max": 2
+      },
+      "display": {
+        "title": {
+          "pt-BR": "Corretores e operação"
+        },
+        "summary": {
+          "pt-BR": "Organize responsáveis pela carteira, acompanhe próximos contatos e revise o que ficou sem encaminhamento."
+        },
+        "category": "productivity",
+        "icon": "BookOpen"
+      },
+      "permissions": [
+        "navigation.imobiliaria",
+        "navigation.tasks",
+        "navigation.radar"
+      ],
+      "sha256": "d906ad3b0d9567e9e9f16338bc96c5fdf2deb684e097d07d3327a5144c8b0a13",
+      "byte_length": 3542,
+      "publisher_label": "Aquila Imob",
+      "homepage": "https://imob.aquila.ia.br",
+      "repository": "https://github.com/robotizze/DeskcommCRM",
+      "tags": [
+        "imobiliaria",
+        "corretores",
+        "equipe"
+      ],
+      "published_at": "2026-10-15"
+    },
+    {
+      "publisher": "aquila",
+      "name": "interessados-e-qualificacao",
+      "version": "1.0.0",
+      "license": "MIT",
+      "host_api": {
+        "min": 2,
+        "max": 2
+      },
+      "display": {
+        "title": {
+          "pt-BR": "Interessados e qualificação"
+        },
+        "summary": {
+          "pt-BR": "Entenda o que a pessoa procura, registre orçamento e preferências e conduza o atendimento até uma visita ou encerramento."
+        },
+        "category": "sales",
+        "icon": "Lightbulb"
+      },
+      "permissions": [
+        "navigation.imobiliaria",
+        "navigation.kanban",
+        "navigation.inbox"
+      ],
+      "sha256": "46fcb1882aa69c34ee5615ec2157804f9fcba9462ce38b159874e7ec2631cc0a",
+      "byte_length": 3639,
+      "publisher_label": "Aquila Imob",
+      "homepage": "https://imob.aquila.ia.br",
+      "repository": "https://github.com/robotizze/DeskcommCRM",
+      "tags": [
+        "imobiliaria",
+        "interessados",
+        "qualificacao"
+      ],
+      "published_at": "2026-10-15"
+    },
+    {
+      "publisher": "aquila",
+      "name": "visitas-e-retornos",
+      "version": "1.0.0",
+      "license": "MIT",
+      "host_api": {
+        "min": 2,
+        "max": 2
+      },
+      "display": {
+        "title": {
+          "pt-BR": "Visitas e retornos"
+        },
+        "summary": {
+          "pt-BR": "Combine imóvel, interessado e corretor, confira o compromisso na agenda e registre o resultado para continuar o atendimento."
+        },
+        "category": "service",
+        "icon": "ListChecks"
+      },
+      "permissions": [
+        "navigation.imobiliaria",
+        "navigation.agenda",
+        "navigation.tasks"
+      ],
+      "sha256": "d04e590b460284d89df37ce252a29cc8114320dc67fcccd484345c24a45300d3",
+      "byte_length": 3601,
+      "publisher_label": "Aquila Imob",
+      "homepage": "https://imob.aquila.ia.br",
+      "repository": "https://github.com/robotizze/DeskcommCRM",
+      "tags": [
+        "imobiliaria",
+        "visitas",
+        "agenda"
+      ],
+      "published_at": "2026-10-15"
+    },
     {
       "publisher": "deskcomm",
       "name": "carrinho-abandonado",
@@ -110,5 +253,5 @@
       "published_at": "2026-09-18"
     }
   ],
-  "revision": 1
+  "revision": 3
 }

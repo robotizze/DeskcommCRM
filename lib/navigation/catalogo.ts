@@ -218,6 +218,16 @@ export const NAV_CATALOG = [
 
   // ---- CRM — o funil ----
   {
+    href: "/app/imobiliaria",
+    label: "Imobiliária",
+    description: "Imóveis, captação, interessados, corretores e visitas ligados ao atendimento.",
+    icon: "Buildings",
+    group: "crm",
+    section: "O dia a dia da venda",
+    minRole: "viewer",
+    modulo: "imobiliaria",
+  },
+  {
     // ⚠️ ERA "Kanban", e a URL continua sendo. O nome saiu da interface porque o
     // produto tinha CINCO vocabulários para a mesma coisa — "Kanban" no menu,
     // "Pipelines" no título desta tela, "Funis" no menu ao lado, "funil" em todo
@@ -432,7 +442,8 @@ export const NAV_CATALOG = [
   {
     href: "/app/settings/tenant/proposals/modelos",
     label: "Modelos de proposta",
-    description: "Personalize os modelos da plataforma ou crie os da sua empresa, inclusive a partir de uma proposta que você já usa.",
+    description:
+      "Personalize os modelos da plataforma ou crie os da sua empresa, inclusive a partir de uma proposta que você já usa.",
     icon: "FileText",
     group: "organizacao",
     section: "Sua empresa",
@@ -549,7 +560,8 @@ export const NAV_CATALOG = [
     // e na busca, e quem usa pode pô-la no menu dela.
     href: "/app/ai/atendimento",
     label: "Fluxos de atendimento",
-    description: "Perguntas que a IA conduz durante a conversa, com as respostas guardadas na ficha do cliente.",
+    description:
+      "Perguntas que a IA conduz durante a conversa, com as respostas guardadas na ficha do cliente.",
     icon: "ListChecks",
     group: "ia",
     section: "Montar o agente",
@@ -591,7 +603,8 @@ export const NAV_CATALOG = [
     label: "Provedores",
     // O "Jev" vem cedo: o ⌘K mostra só o começo da descrição, e a versão
     // longa cortava antes do nome — quem procurava "jev" achava, mas não via por quê.
-    description: "Ligue o Jev para decisões rápidas e escolha qual inteligência atende cada parte do sistema.",
+    description:
+      "Ligue o Jev para decisões rápidas e escolha qual inteligência atende cada parte do sistema.",
     icon: "Plugs",
     group: "ia",
     section: "Montar o agente",
@@ -918,7 +931,8 @@ export const NAV_CATALOG = [
     // configuração tem superfície" (docs/doctrine/restricao-de-canal.md).
     href: "/app/settings/automacoes",
     label: "Automações",
-    description: "O freio único do passo em que a IA escolhe entre as opções de uma regra, para a empresa inteira.",
+    description:
+      "O freio único do passo em que a IA escolhe entre as opções de uma regra, para a empresa inteira.",
     icon: "FlowArrow",
     group: "organizacao",
     section: "Sua empresa",

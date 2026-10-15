@@ -14,14 +14,21 @@
  *   pnpm tsx scripts/gerar-catalogo-de-extensoes.ts --conferir # só confere (é o que o CI roda)
  */
 import { createHash } from "node:crypto";
-import { readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
 
-import { checkCompatibility, parseManifest, type CatalogEntry } from "../lib/extensions/manifest";
+import {
+  checkCompatibility,
+  parseCatalog,
+  parseManifest,
+  type CatalogEntry,
+} from "../lib/extensions/manifest";
 
 const RAIZ = join(__dirname, "..");
 const PACOTES = join(RAIZ, "extensoes", "pacotes");
 const DESTINO = join(RAIZ, "extensoes", "catalogo.json");
+const CATALOGO_PUBLICO = join(RAIZ, "public", "extensoes", "catalogo.json");
+const PACOTES_PUBLICOS = join(RAIZ, "public", "packages");
 
 /**
  * A origem de onde o host baixa os bytes.
@@ -32,10 +39,11 @@ const DESTINO = join(RAIZ, "extensoes", "catalogo.json");
  * (`https://usuario.github.io/REPO` é recusado), e a hospedagem precisa ser um domínio ou
  * subdomínio dedicado. Provado nos três casos em `tests/unit/catalogo-de-extensoes-em-dia.test.ts`.
  *
- * Qual subdomínio é decisão do dono (DEC-007). Até lá o valor abaixo é o padrão declarado,
- * e `EXTENSOES_ORIGEM` troca sem tocar em código. Publicar de fato continua sendo ato dele.
+ * Este fork distribui o catálogo Aquila no domínio escolhido para a instalação.
+ * `EXTENSOES_ORIGEM` permite gerar para outra instalação sem alterar os pacotes.
+ * A geração prepara os artefatos; servir o domínio depende da publicação do aplicativo.
  */
-const ORIGEM = process.env.EXTENSOES_ORIGEM ?? "https://extensoes.deskcomm.com.br";
+const ORIGEM = process.env.EXTENSOES_ORIGEM ?? "https://imob.aquila.ia.br";
 
 function arquivosDePacote(dir: string): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entrada) => {
@@ -61,6 +69,7 @@ const LOJA: Record<string, Extra> = JSON.parse(
 async function main() {
   const conferir = process.argv.includes("--conferir");
   const entries: CatalogEntry[] = [];
+  const artefatos: Array<{ caminho: string; bytes: Buffer }> = [];
 
   for (const caminho of arquivosDePacote(PACOTES).sort()) {
     const bytes = readFileSync(caminho);
@@ -76,6 +85,8 @@ async function main() {
     const extra = LOJA[chave];
     if (!extra) throw new Error(`${chave}: sem metadado de loja em extensoes/loja.json`);
 
+    const digest = createHash("sha256").update(bytes).digest("hex");
+    artefatos.push({ caminho: join(PACOTES_PUBLICOS, `${digest}.json`), bytes });
     entries.push({
       publisher: manifest.publisher,
       name: manifest.name,
@@ -84,7 +95,7 @@ async function main() {
       host_api: manifest.host_api,
       display: manifest.display,
       permissions: manifest.permissions,
-      sha256: createHash("sha256").update(bytes).digest("hex"),
+      sha256: digest,
       byte_length: statSync(caminho).size,
       ...extra,
     });
@@ -97,16 +108,25 @@ async function main() {
   const corpo = { format_version: 1 as const, origin: ORIGEM, entries };
   const anterior = (() => {
     try {
-      return JSON.parse(readFileSync(DESTINO, "utf8")) as { revision: number; entries: unknown[] };
+      return JSON.parse(readFileSync(DESTINO, "utf8")) as {
+        origin: string;
+        revision: number;
+        entries: unknown[];
+      };
     } catch {
       return null;
     }
   })();
   const mudou =
-    anterior === null || JSON.stringify(anterior.entries) !== JSON.stringify(corpo.entries);
+    anterior === null ||
+    anterior.origin !== corpo.origin ||
+    JSON.stringify(anterior.entries) !== JSON.stringify(corpo.entries);
   const revision = anterior === null ? 1 : mudou ? anterior.revision + 1 : anterior.revision;
 
   const catalogo = JSON.stringify({ ...corpo, revision }, null, 2) + "\n";
+  // A vitrine também é entrada externa: origem e metadados precisam passar
+  // pelo contrato real antes de os bytes serem distribuídos.
+  parseCatalog(new TextEncoder().encode(catalogo));
 
   if (conferir) {
     const atual = readFileSync(DESTINO, "utf8");
@@ -116,12 +136,26 @@ async function main() {
           "Rode: pnpm tsx scripts/gerar-catalogo-de-extensoes.ts",
       );
     }
-    console.log(`catálogo em dia: ${entries.length} pacote(s), revisão ${revision}`);
+    if (readFileSync(CATALOGO_PUBLICO, "utf8") !== catalogo) {
+      throw new Error("public/extensoes/catalogo.json diverge do catálogo validado.");
+    }
+    for (const artefato of artefatos) {
+      if (!readFileSync(artefato.caminho).equals(artefato.bytes)) {
+        throw new Error(`${relative(RAIZ, artefato.caminho)} diverge do pacote validado.`);
+      }
+    }
+    console.info(`catálogo em dia: ${entries.length} pacote(s), revisão ${revision}`);
     return;
   }
 
   writeFileSync(DESTINO, catalogo);
-  console.log(`catálogo gerado: ${entries.length} pacote(s), revisão ${revision}, origem ${ORIGEM}`);
+  mkdirSync(join(RAIZ, "public", "extensoes"), { recursive: true });
+  mkdirSync(PACOTES_PUBLICOS, { recursive: true });
+  writeFileSync(CATALOGO_PUBLICO, catalogo);
+  for (const artefato of artefatos) writeFileSync(artefato.caminho, artefato.bytes);
+  console.info(
+    `catálogo gerado: ${entries.length} pacote(s), revisão ${revision}, origem ${ORIGEM}`,
+  );
 }
 
 void main().catch((erro: unknown) => {

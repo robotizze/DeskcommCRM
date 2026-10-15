@@ -1,0 +1,76 @@
+{
+  "format_version": 1,
+  "profile": "declarative",
+  "publisher": "aquila",
+  "name": "visitas-e-retornos",
+  "version": "1.0.0",
+  "license": "MIT",
+  "host_api": { "min": 2, "max": 2 },
+  "permissions": ["navigation.imobiliaria", "navigation.agenda", "navigation.tasks"],
+  "dependencies": [],
+  "data": { "mode": "none" },
+  "display": {
+    "title": { "pt-BR": "Visitas e retornos" },
+    "summary": {
+      "pt-BR": "Combine imóvel, interessado e corretor, confira o compromisso na agenda e registre o resultado para continuar o atendimento."
+    },
+    "category": "service",
+    "icon": "ListChecks"
+  },
+  "configuration": { "density": "comfortable", "show_description": true },
+  "contributions": {
+    "crm_cards": [
+      {
+        "id": "combinar-visita",
+        "title": { "pt-BR": "Toda visita tem imóvel, pessoa e responsável" },
+        "description": {
+          "pt-BR": "Só confirme depois de combinar acesso ao imóvel e disponibilidade das pessoas."
+        },
+        "icon": "ListChecks",
+        "blocks": [
+          {
+            "heading": { "pt-BR": "Registre o encontro completo" },
+            "body": {
+              "pt-BR": "Crie primeiro um compromisso na Agenda, vinculado ao contato interessado, com data, horário e duração combinados. Na área Imobiliária, vincule esse compromisso ao imóvel e ao corretor. Combine o ponto de encontro e o acesso com o proprietário. Não exponha chaves, senhas de portaria ou documentos em mensagens públicas. Quando o horário mudar, atualize o mesmo compromisso na Agenda."
+            }
+          }
+        ],
+        "action": { "label": { "pt-BR": "Marcar visita" }, "capability": "imobiliaria.open" }
+      },
+      {
+        "id": "conferir-agenda",
+        "title": { "pt-BR": "Confira a agenda antes de confirmar" },
+        "description": {
+          "pt-BR": "O compromisso deve caber na rotina do corretor e ser entendido pelo interessado."
+        },
+        "icon": "BookOpen",
+        "blocks": [
+          {
+            "heading": { "pt-BR": "Verifique horário e confirmação" },
+            "body": {
+              "pt-BR": "Abra a Agenda para conferir o compromisso e os demais horários do responsável. Confirme endereço, data e horário com o interessado no atendimento. Se houver cancelamento, registre a mudança antes de oferecer o horário novamente. A conexão com Google Calendar é opcional e depende da configuração da instalação; o pacote não a conecta nem envia lembretes automaticamente."
+            }
+          }
+        ],
+        "action": { "label": { "pt-BR": "Conferir agenda" }, "capability": "agenda.open" }
+      },
+      {
+        "id": "fechar-retorno",
+        "title": { "pt-BR": "A visita termina com resultado e retorno" },
+        "description": {
+          "pt-BR": "Realizada, cancelada ou sem comparecimento: cada resultado pede uma decisão."
+        },
+        "icon": "Lightbulb",
+        "blocks": [
+          {
+            "heading": { "pt-BR": "Transforme a visita no próximo passo" },
+            "body": {
+              "pt-BR": "Atualize o resultado do compromisso na Agenda e registre o que agradou e o que faltou nas anotações do atendimento. A visita ligada ao imóvel acompanha o estado desse compromisso. Abra uma tarefa de retorno com responsável e prazo: proposta, outra opção, reagendamento ou encerramento. Revise o perfil do interessado quando a visita revelar uma preferência nova."
+            }
+          }
+        ],
+        "action": { "label": { "pt-BR": "Definir retorno" }, "capability": "tasks.open" }
+      }
+    ]
+  }
+}

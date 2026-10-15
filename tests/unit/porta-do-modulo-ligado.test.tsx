@@ -204,6 +204,9 @@ describe("o grupo é o que está NA TELA, não o rótulo do modelo de dados", ()
     // As de `organizacao` (rodapé) não têm `hub`; todas as outras têm.
     expect(comHub.length).toBeGreaterThan(0);
     expect(semHub.every((p) => p.grupo === "Configurações")).toBe(true);
+    expect(ondeOModuloAparece("imobiliaria")).toEqual([
+      { href: "/app/imobiliaria", label: "Imobiliária", grupo: "CRM", hub: "Ver tudo em CRM" },
+    ]);
   });
 
   it("⭐ grupo do rodapé: diz 'Configurações', que é o que o menu escreve", () => {

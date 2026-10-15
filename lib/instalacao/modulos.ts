@@ -54,6 +54,7 @@ export const MODULOS_OPCIONAIS = [
   "propostas",
   "crm_b2b",
   "honorarios",
+  "imobiliaria",
   // #1907 item 4 — a comanda nasce em `modulos_instalados` como os honorários:
   // sem a linha `financeiro` as telas de comanda e as rotas de
   // `app/api/v1/financeiro/comandas/*` não existem para ninguém, e a
@@ -67,7 +68,11 @@ export type ModuloOpcional = (typeof MODULOS_OPCIONAIS)[number];
 
 /** Os módulos de tabela do ADR-0002 dentro de `MODULOS_OPCIONAIS` — resolvidos por
  * `modulos_instalados.estado = 'ativo'`, nunca por `platform_config`. */
-const MODULOS_DE_TABELA = ["honorarios", "financeiro"] as const satisfies readonly ModuloOpcional[];
+const MODULOS_DE_TABELA = [
+  "honorarios",
+  "financeiro",
+  "imobiliaria",
+] as const satisfies readonly ModuloOpcional[];
 
 /**
  * Só os módulos por FLAG — os que a tela `/admin/sistema` liga e desliga via
@@ -225,7 +230,9 @@ export async function cobrancaLigadaComMemo(
   if (memo !== undefined && memo.ate > agora) return memo.ligado;
   let ligado = false;
   try {
-    const { rows } = await db.query<{ ligada: boolean }>("select public.fn_cobranca_ligada() as ligada");
+    const { rows } = await db.query<{ ligada: boolean }>(
+      "select public.fn_cobranca_ligada() as ligada",
+    );
     ligado = rows[0]?.ligada === true;
   } catch (erro) {
     logger.warn("módulos da instalação: leitura da cobrança falhou — tratando como desligada", {

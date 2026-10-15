@@ -28,6 +28,7 @@ export const EXTENSION_PERMISSIONS = [
   "navigation.contacts",
   "navigation.agenda",
   "navigation.radar",
+  "navigation.imobiliaria",
   // O consentimento para um tema de extensão pintar o produto — mostrado na
   // MESMA tela que lista as demais permissões antes de alguém aceitar a extensão.
   "theme.apply",
@@ -47,6 +48,7 @@ export const EXTENSION_CAPABILITIES = [
   "contacts.open",
   "agenda.open",
   "radar.open",
+  "imobiliaria.open",
 ] as const;
 export type ExtensionCapability = (typeof EXTENSION_CAPABILITIES)[number];
 
@@ -68,6 +70,7 @@ export const PORTA_DA_CAPACIDADE: Record<ExtensionCapability, PortaDaCapacidade>
   "contacts.open": { destino: "/app/contacts", permissao: "navigation.contacts" },
   "agenda.open": { destino: "/app/agenda", permissao: "navigation.agenda" },
   "radar.open": { destino: "/app/radar", permissao: "navigation.radar" },
+  "imobiliaria.open": { destino: "/app/imobiliaria", permissao: "navigation.imobiliaria" },
 };
 
 /** Todos os destinos que o host aceita devolver. A tela reconfere contra este conjunto. */

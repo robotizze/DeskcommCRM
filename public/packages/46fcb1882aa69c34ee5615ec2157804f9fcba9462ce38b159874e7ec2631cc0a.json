@@ -1,0 +1,79 @@
+{
+  "format_version": 1,
+  "profile": "declarative",
+  "publisher": "aquila",
+  "name": "interessados-e-qualificacao",
+  "version": "1.0.0",
+  "license": "MIT",
+  "host_api": { "min": 2, "max": 2 },
+  "permissions": ["navigation.imobiliaria", "navigation.kanban", "navigation.inbox"],
+  "dependencies": [],
+  "data": { "mode": "none" },
+  "display": {
+    "title": { "pt-BR": "Interessados e qualificação" },
+    "summary": {
+      "pt-BR": "Entenda o que a pessoa procura, registre orçamento e preferências e conduza o atendimento até uma visita ou encerramento."
+    },
+    "category": "sales",
+    "icon": "Lightbulb"
+  },
+  "configuration": { "density": "comfortable", "show_description": true },
+  "contributions": {
+    "crm_cards": [
+      {
+        "id": "entender-busca",
+        "title": { "pt-BR": "Pergunte antes de enviar imóveis" },
+        "description": {
+          "pt-BR": "Poucas opções adequadas ajudam mais do que uma lista sem critério."
+        },
+        "icon": "BookOpen",
+        "blocks": [
+          {
+            "heading": { "pt-BR": "Registre uma busca que outro corretor entenda" },
+            "body": {
+              "pt-BR": "Vincule o perfil ao contato que já existe. Pergunte se é compra ou locação, cidade e bairros de interesse, faixa de orçamento, tipo de imóvel e dormitórios necessários. Registre preferências e o que é indispensável. Combine o próximo contato e o corretor responsável. Confira as fichas de imóveis disponíveis antes de sugerir opções; nenhuma seleção é enviada automaticamente pelo pacote."
+            }
+          }
+        ],
+        "action": {
+          "label": { "pt-BR": "Qualificar interessado" },
+          "capability": "imobiliaria.open"
+        }
+      },
+      {
+        "id": "avancar-com-evidencia",
+        "title": { "pt-BR": "Mova o negócio quando a etapa aconteceu" },
+        "description": {
+          "pt-BR": "Uma resposta no WhatsApp não é uma visita confirmada nem uma proposta aceita."
+        },
+        "icon": "ListChecks",
+        "blocks": [
+          {
+            "heading": { "pt-BR": "Use o funil para mostrar o próximo compromisso" },
+            "body": {
+              "pt-BR": "No Funil, vincule o negócio ao contato e mantenha o responsável. Avance quando houver um fato registrado: busca entendida, opções apresentadas, visita combinada ou proposta recebida. Acrescente uma tarefa de retorno com prazo. Se não houver opção compatível, explique ao interessado e combine quando a busca será revista."
+            }
+          }
+        ],
+        "action": { "label": { "pt-BR": "Acompanhar no funil" }, "capability": "kanban.open" }
+      },
+      {
+        "id": "oferecer-com-contexto",
+        "title": { "pt-BR": "Retome o WhatsApp com contexto" },
+        "description": {
+          "pt-BR": "Confirme disponibilidade e permissão de contato antes de mandar a oferta."
+        },
+        "icon": "Lightbulb",
+        "blocks": [
+          {
+            "heading": { "pt-BR": "Faça uma oferta que responda à busca" },
+            "body": {
+              "pt-BR": "Leia a conversa e as preferências registradas. Informe a referência do imóvel, preço e características que atendem à busca, sem expor dados do proprietário. Confira se a pessoa aceita contato e respeite pedidos para parar. O envio usa o WhatsApp já conectado ao CRM e suas regras de canal; este roteiro não cria campanhas nem dispara mensagens por conta própria."
+            }
+          }
+        ],
+        "action": { "label": { "pt-BR": "Continuar atendimento" }, "capability": "inbox.open" }
+      }
+    ]
+  }
+}

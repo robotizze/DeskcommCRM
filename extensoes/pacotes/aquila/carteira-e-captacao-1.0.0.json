@@ -1,0 +1,74 @@
+{
+  "format_version": 1,
+  "profile": "declarative",
+  "publisher": "aquila",
+  "name": "carteira-e-captacao",
+  "version": "1.0.0",
+  "license": "MIT",
+  "host_api": { "min": 2, "max": 2 },
+  "permissions": ["navigation.imobiliaria", "navigation.contacts"],
+  "dependencies": [],
+  "data": { "mode": "none" },
+  "display": {
+    "title": { "pt-BR": "Carteira e captação de imóveis" },
+    "summary": {
+      "pt-BR": "Da conversa com o proprietário ao imóvel disponível: registre a autorização, confira a ficha e defina quem conduz a próxima etapa."
+    },
+    "category": "sales",
+    "icon": "ListChecks"
+  },
+  "configuration": { "density": "comfortable", "show_description": true },
+  "contributions": {
+    "crm_cards": [
+      {
+        "id": "captar-com-autorizacao",
+        "title": { "pt-BR": "Toda captação começa com autorização" },
+        "description": {
+          "pt-BR": "Um endereço recebido não significa que o imóvel pode ser divulgado."
+        },
+        "icon": "BookOpen",
+        "blocks": [
+          {
+            "heading": { "pt-BR": "Combine o que pode ser anunciado" },
+            "body": {
+              "pt-BR": "Cadastre o proprietário em Contatos. Na área Imobiliária, abra a ficha do imóvel, vincule o proprietário e registre a etapa de captação, o corretor responsável, o próximo passo e a data do próximo contato. Guarde a autorização de divulgação nas anotações internas do atendimento; antes dela, mantenha a captação aberta. Não coloque documentos pessoais ou códigos de acesso em descrições públicas."
+            }
+          }
+        ],
+        "action": { "label": { "pt-BR": "Abrir captações" }, "capability": "imobiliaria.open" }
+      },
+      {
+        "id": "conferir-ficha",
+        "title": { "pt-BR": "Confira a ficha antes de oferecer" },
+        "description": {
+          "pt-BR": "Preço, disponibilidade e responsável precisam corresponder ao que foi combinado."
+        },
+        "icon": "ListChecks",
+        "blocks": [
+          {
+            "heading": { "pt-BR": "Complete o que muda a decisão do interessado" },
+            "body": {
+              "pt-BR": "Use uma referência única do imóvel. Confira finalidade, tipo, cidade, bairro, preço, área, dormitórios e vagas. Vincule proprietário e corretor responsável. Atualize a disponibilidade quando houver reserva, venda ou locação. A ficha interna serve ao atendimento; a autorização de divulgação é uma etapa separada."
+            }
+          }
+        ],
+        "action": { "label": { "pt-BR": "Conferir carteira" }, "capability": "imobiliaria.open" }
+      },
+      {
+        "id": "retorno-proprietario",
+        "title": { "pt-BR": "Volte ao proprietário com um próximo passo" },
+        "description": { "pt-BR": "Uma captação parada precisa de retorno, responsável e prazo." },
+        "icon": "Lightbulb",
+        "blocks": [
+          {
+            "heading": { "pt-BR": "Continue a mesma história" },
+            "body": {
+              "pt-BR": "Abra o contato do proprietário para retomar o histórico. Registre o que falta para concluir a captação: autorização, fotos, ajuste de preço ou confirmação de disponibilidade. Defina o próximo contato na ficha do imóvel. Se a pessoa desistir, encerre a captação e pare de insistir."
+            }
+          }
+        ],
+        "action": { "label": { "pt-BR": "Abrir proprietários" }, "capability": "contacts.open" }
+      }
+    ]
+  }
+}

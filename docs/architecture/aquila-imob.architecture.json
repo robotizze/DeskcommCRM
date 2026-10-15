@@ -1,0 +1,297 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Aquila Imob — operação imobiliária em uma instalação própria",
+    "subtitle": "módulo opcional, roteiros declarativos e continuidade no atendimento existente",
+    "output": "aquila-imob.html",
+    "quality_profile": "standard"
+  },
+  "lanes": [
+    { "id": "config", "label": "Instalação própria" },
+    { "id": "plugins", "label": "Pacotes e framework" },
+    { "id": "operacao", "label": "Operação imobiliária" },
+    { "id": "crm", "label": "Atendimento e continuidade" }
+  ],
+  "mainPath": ["instalacao", "modulos", "imobiliaria", "visitas", "agenda", "retorno", "perfil"],
+  "nodes": [
+    {
+      "id": "instalacao",
+      "lane": "config",
+      "col": 0,
+      "type": "service",
+      "label": "Aquila Imob",
+      "sublabel": "banco, Auth, serviços e domínio próprios; o fork não usa o Imob Flow"
+    },
+    {
+      "id": "marca",
+      "lane": "config",
+      "col": 1,
+      "type": "frontend",
+      "label": "/admin/marca",
+      "sublabel": "marca da instalação acima da semente APP_NAME"
+    },
+    {
+      "id": "modulos",
+      "lane": "config",
+      "col": 2,
+      "type": "frontend",
+      "label": "/admin/modulos",
+      "sublabel": "instala Imobiliária; provisionadora fixa cria tabelas opcionais"
+    },
+    {
+      "id": "catalogo",
+      "lane": "plugins",
+      "col": 1,
+      "type": "service",
+      "label": "/extensoes/catalogo.json",
+      "sublabel": "sete entradas; origin exata https://imob.aquila.ia.br"
+    },
+    {
+      "id": "bytes",
+      "lane": "plugins",
+      "col": 2,
+      "type": "service",
+      "label": "/packages/<sha256>.json",
+      "sublabel": "bytes exatos do manifesto, SHA-256 e tamanho conferidos pelo host"
+    },
+    {
+      "id": "extensoes",
+      "lane": "plugins",
+      "col": 3,
+      "type": "frontend",
+      "label": "/app/extensions",
+      "sublabel": "admissão, instalação e ativação por organização; recibos do framework"
+    },
+    {
+      "id": "cards",
+      "lane": "plugins",
+      "col": 4,
+      "type": "frontend",
+      "label": "Hub do CRM",
+      "sublabel": "quatro roteiros Aquila; portas nomeadas, sem endereço livre ou código executável"
+    },
+    {
+      "id": "imobiliaria",
+      "lane": "operacao",
+      "col": 3,
+      "type": "frontend",
+      "label": "/app/imobiliaria",
+      "sublabel": "carteira, captação, corretores, interessados e visitas"
+    },
+    {
+      "id": "carteira",
+      "lane": "operacao",
+      "col": 4,
+      "type": "database",
+      "label": "Carteira e captação",
+      "sublabel": "imóvel, disponibilidade, autorização e responsável"
+    },
+    {
+      "id": "perfil",
+      "lane": "operacao",
+      "col": 4,
+      "type": "database",
+      "label": "Perfil do interessado",
+      "sublabel": "contato, finalidade, orçamento, região e preferências"
+    },
+    {
+      "id": "visitas",
+      "lane": "operacao",
+      "col": 5,
+      "type": "database",
+      "label": "Visita",
+      "sublabel": "imóvel + interessado + corretor + compromisso real da Agenda"
+    },
+    {
+      "id": "contatos",
+      "lane": "crm",
+      "col": 2,
+      "type": "database",
+      "label": "Contatos",
+      "sublabel": "identidade e histórico existentes, sem cadastro paralelo da pessoa"
+    },
+    {
+      "id": "inbox",
+      "lane": "crm",
+      "col": 5,
+      "type": "frontend",
+      "label": "Conversas e WhatsApp",
+      "sublabel": "atendimento WAHA existente; a equipe usa o contexto imobiliário"
+    },
+    {
+      "id": "agenda",
+      "lane": "crm",
+      "col": 6,
+      "type": "frontend",
+      "label": "/app/agenda",
+      "sublabel": "compromisso, responsável e horário da visita"
+    },
+    {
+      "id": "auditoria",
+      "lane": "operacao",
+      "col": 6,
+      "type": "database",
+      "label": "api_audit_log",
+      "sublabel": "gravações bem-sucedidas do módulo, ator e organização atuais"
+    },
+    {
+      "id": "tela-auditoria",
+      "lane": "crm",
+      "col": 7,
+      "type": "frontend",
+      "label": "/app/audit",
+      "sublabel": "quem tem acesso verifica a trilha e corrige registros na operação"
+    },
+    {
+      "id": "retorno",
+      "lane": "crm",
+      "col": 7,
+      "type": "frontend",
+      "label": "Resultado e tarefa de retorno",
+      "sublabel": "equipe registra desfecho, define prazo e corrige a próxima ação"
+    }
+  ],
+  "edges": [
+    {
+      "id": "instalacao-marca",
+      "from": "instalacao",
+      "to": "marca",
+      "label": "semente de marca própria"
+    },
+    { "id": "marca-ui", "from": "marca", "to": "imobiliaria", "label": "fachada em runtime" },
+    {
+      "id": "instalacao-modulos",
+      "from": "instalacao",
+      "to": "modulos",
+      "label": "administrador da instalação"
+    },
+    {
+      "id": "modulos-ui",
+      "from": "modulos",
+      "to": "imobiliaria",
+      "label": "instalação ativa libera operação"
+    },
+    {
+      "id": "instalacao-catalogo",
+      "from": "instalacao",
+      "to": "catalogo",
+      "label": "artefatos no public da imagem"
+    },
+    {
+      "id": "catalogo-bytes",
+      "from": "catalogo",
+      "to": "bytes",
+      "label": "digest nomeia o pacote"
+    },
+    {
+      "id": "bytes-extensoes",
+      "from": "bytes",
+      "to": "extensoes",
+      "label": "host verifica antes de admitir artefato"
+    },
+    {
+      "id": "catalogo-extensoes",
+      "from": "catalogo",
+      "to": "extensoes",
+      "label": "origem e revisão admitidas"
+    },
+    {
+      "id": "extensoes-cards",
+      "from": "extensoes",
+      "to": "cards",
+      "label": "admin da organização ativa roteiro"
+    },
+    { "id": "cards-ui", "from": "cards", "to": "imobiliaria", "label": "imobiliaria.open literal" },
+    {
+      "id": "cards-inbox",
+      "from": "cards",
+      "to": "inbox",
+      "label": "inbox.open preserva autorização"
+    },
+    {
+      "id": "contatos-ui",
+      "from": "contatos",
+      "to": "imobiliaria",
+      "label": "pessoas existentes da organização"
+    },
+    {
+      "id": "ui-carteira",
+      "from": "imobiliaria",
+      "to": "carteira",
+      "label": "ficha, disponibilidade e captação"
+    },
+    {
+      "id": "ui-perfil",
+      "from": "imobiliaria",
+      "to": "perfil",
+      "label": "equipe registra a busca"
+    },
+    {
+      "id": "perfil-inbox",
+      "from": "perfil",
+      "to": "inbox",
+      "label": "contexto para oferta pela equipe"
+    },
+    {
+      "id": "carteira-inbox",
+      "from": "carteira",
+      "to": "inbox",
+      "label": "confere referência e disponibilidade"
+    },
+    {
+      "id": "inbox-contatos",
+      "from": "inbox",
+      "to": "contatos",
+      "label": "histórico do atendimento"
+    },
+    {
+      "id": "ui-visitas",
+      "from": "imobiliaria",
+      "to": "visitas",
+      "label": "vincula imóvel e interessado"
+    },
+    {
+      "id": "visitas-agenda",
+      "from": "visitas",
+      "to": "agenda",
+      "label": "appointment_id aponta ao compromisso"
+    },
+    {
+      "id": "agenda-retorno",
+      "from": "agenda",
+      "to": "retorno",
+      "label": "equipe registra resultado"
+    },
+    {
+      "id": "retorno-perfil",
+      "from": "retorno",
+      "to": "perfil",
+      "label": "revisa preferências para próxima oferta"
+    },
+    {
+      "id": "operacao-audit",
+      "from": "imobiliaria",
+      "to": "auditoria",
+      "label": "API registra a gravação bem-sucedida"
+    },
+    {
+      "id": "audit-leitura",
+      "from": "auditoria",
+      "to": "tela-auditoria",
+      "label": "trilha disponível conforme o papel"
+    },
+    {
+      "id": "audit-correcao",
+      "from": "tela-auditoria",
+      "to": "imobiliaria",
+      "label": "equipe verifica e corrige o atendimento"
+    },
+    {
+      "id": "retorno-carteira",
+      "from": "retorno",
+      "to": "carteira",
+      "label": "corrige disponibilidade antes de outra visita"
+    }
+  ]
+}
