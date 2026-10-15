@@ -64,6 +64,21 @@ const DIR = join(process.cwd(), ".github/workflows");
  * que desliga um job de entrega fica visível em code review.
  */
 const GATILHO_ESPERADO: Record<string, { condicao: string | null; efeito: string }> = {
+  "aquila-images.yml::contrato": {
+    condicao: "github.repository == 'robotizze/DeskcommCRM'",
+    efeito:
+      "Valida catálogo e versão do fork antes de construir as imagens próprias; desliga somente fora deste aplicativo.",
+  },
+  "aquila-images.yml::construir": {
+    condicao: null,
+    efeito:
+      "Constrói o trio em AMD64/ARM64 e prova HTTP do app; desligar impede uma versão completa de chegar à VPS.",
+  },
+  "aquila-images.yml::publicar-versao": {
+    condicao: "github.event_name != 'pull_request'",
+    efeito:
+      "Publica os três manifestos numéricos só depois dos seis builds e smoke; PR apenas valida sem publicar.",
+  },
   // --- a cadeia que leva o conserto até a VPS ---------------------------------
   "release.yml::abrir-pr-de-release": {
     condicao: "github.event_name == 'workflow_dispatch'",
@@ -156,7 +171,8 @@ const GATILHO_ESPERADO: Record<string, { condicao: string | null; efeito: string
   // Desligar qualquer um destes faz o PR entrar sem ter sido testado.
   "ci.yml::verify-parte": {
     condicao: null,
-    efeito: "São as partes da suíte (typecheck + lint + test:unit); sem elas o `verify` não tem o que ler.",
+    efeito:
+      "São as partes da suíte (typecheck + lint + test:unit); sem elas o `verify` não tem o que ler.",
   },
   // A suíte foi dividida em partes (tempo medido, ver ci.yml); o nome que a
   // branch protection exige continua sendo `verify`, agora o agregado.
@@ -274,7 +290,9 @@ interface JobLido {
 function lerJobs(): JobLido[] {
   const achados: JobLido[] = [];
 
-  for (const arquivo of readdirSync(DIR).filter((f) => /\.ya?ml$/.test(f)).sort()) {
+  for (const arquivo of readdirSync(DIR)
+    .filter((f) => /\.ya?ml$/.test(f))
+    .sort()) {
     const brutas = readFileSync(join(DIR, arquivo), "utf8").split("\n");
     // Comentário não conta em NENHUMA direção: um `#` falando de `if:` não pode
     // satisfazer o mapa, e um `#` na coluna 0 no meio de `jobs:` não pode
@@ -331,7 +349,10 @@ describe("nenhum job pode ser desligado por uma condição — `skipped` conta c
     // nada — o modo de falha mais comum desta classe de teste.
     expect(jobs.length, "jobs lidos em .github/workflows").toBeGreaterThanOrEqual(10);
     expect(
-      jobs.filter((j) => j.condicao !== null).map(chave).sort(),
+      jobs
+        .filter((j) => j.condicao !== null)
+        .map(chave)
+        .sort(),
       "o recorte de `if:` está cego — nenhuma condição foi lida, e o mapa passaria por vacuidade",
     ).not.toEqual([]);
     // E o inverso: se TUDO virasse condição, a comparação também seria inútil.

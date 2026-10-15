@@ -42,6 +42,7 @@ PERMISSOES = [
     "navigation.contacts",
     "navigation.agenda",
     "navigation.radar",
+    "navigation.imobiliaria",
     "theme.apply",
     "dados.proprios",
     # O consentimento para um tema de extensão pintar o produto (ADR-0003, #1095).
@@ -55,6 +56,7 @@ CAPACIDADES = [
     "contacts.open",
     "agenda.open",
     "radar.open",
+    "imobiliaria.open",
 ]
 HOST_API_ATUAL = 2
 

@@ -1,0 +1,28 @@
+# Complemento da stack existente: use SEMPRE após docker-compose.prod.yml.
+# A versão acompanha o trio publicado por aquila-images.yml. Nunca constrói na VPS.
+# Compose 2.24.4+ reconhece !reset para retirar os escapes de build da base.
+services:
+  app:
+    image: ghcr.io/robotizze/aquila-imob:${AQUILA_VERSION:-0.1.0}
+    pull_policy: missing
+    environment:
+      APP_NAME: Aquila Imob
+      NEXT_PUBLIC_APP_URL: https://imob.aquila.ia.br
+      NEXT_PUBLIC_ADMIN_URL: https://imob.aquila.ia.br
+      WAHA_API_BASE_URL: http://waha:3000
+  worker:
+    image: ghcr.io/robotizze/aquila-imob-worker:${AQUILA_VERSION:-0.1.0}
+    pull_policy: missing
+    build: !reset null
+    environment:
+      APP_NAME: Aquila Imob
+      NEXT_PUBLIC_APP_URL: https://imob.aquila.ia.br
+      NEXT_PUBLIC_ADMIN_URL: https://imob.aquila.ia.br
+  scheduler:
+    image: ghcr.io/robotizze/aquila-imob-scheduler:${AQUILA_VERSION:-0.1.0}
+    pull_policy: missing
+    build: !reset null
+
+# Nenhuma porta nova é publicada. WAHA, Redis, HTTPS e persistência são da base.
+# Os três serviços compartilham a mesma rede e os mesmos segredos da instalação
+# Aquila, fornecidos pelo .env privado; nenhuma chave é assada nas imagens.

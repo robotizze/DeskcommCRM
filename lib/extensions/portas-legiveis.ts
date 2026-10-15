@@ -21,6 +21,7 @@ const NOME_DA_PORTA: Record<ExtensionPermission, string> = {
   "navigation.contacts": "Contatos",
   "navigation.agenda": "Agenda",
   "navigation.radar": "Radar",
+  "navigation.imobiliaria": "Imobiliária",
   // `theme.apply` não abre uma tela: pinta o produto com o tema escolhido. O
   // label próprio impede que o `Record` exaustivo deixe de compilar e que a
   // tela de aceite silencie sobre um acesso que está declarado.

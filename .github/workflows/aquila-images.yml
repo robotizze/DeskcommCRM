@@ -1,0 +1,211 @@
+name: Publicar imagens Aquila Imob
+
+on:
+  push:
+    tags: ["aquila-v*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Versão Aquila inédita, no formato X.Y.Z"
+        required: true
+        default: "0.1.0"
+        type: string
+  pull_request:
+    paths:
+      - ".github/workflows/aquila-images.yml"
+      - "docker-compose.aquila.yml"
+      - "Dockerfile*"
+      - "app/**"
+      - "lib/**"
+      - "components/**"
+      - "workers/**"
+      - "public/**"
+      - "extensoes/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: aquila-images-${{ inputs.version || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  contrato:
+    if: github.repository == 'robotizze/DeskcommCRM'
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.value }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+      - run: corepack enable && corepack prepare pnpm@9.15.9 --activate
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm tsx scripts/gerar-catalogo-de-extensoes.ts --conferir
+      - name: Resolver a versão sem interpretar entrada como comando
+        id: version
+        env:
+          REQUESTED_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            version="0.0.0"
+          elif [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            version="${GITHUB_REF_NAME#aquila-v}"
+          else
+            version="$REQUESTED_VERSION"
+          fi
+          if [[ ! "$version" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo "::error::Use uma versão X.Y.Z, sem prefixo, espaço ou sufixo."
+            exit 1
+          fi
+          echo "value=$version" >> "$GITHUB_OUTPUT"
+
+  construir:
+    needs: contrato
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        name: [aquila-imob, aquila-imob-worker, aquila-imob-scheduler]
+        arch: [amd64, arm64]
+        include:
+          - name: aquila-imob
+            dockerfile: Dockerfile
+          - name: aquila-imob-worker
+            dockerfile: Dockerfile.worker
+          - name: aquila-imob-scheduler
+            dockerfile: Dockerfile.scheduler
+    steps:
+      - uses: actions/checkout@v7
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/login-action@v4
+        if: github.event_name != 'pull_request'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Construir cada arquitetura nativamente, sem segredos de produção
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          platforms: linux/${{ matrix.arch }}
+          push: ${{ github.event_name != 'pull_request' }}
+          load: true
+          tags: ghcr.io/robotizze/${{ matrix.name }}:build-${{ github.run_id }}-${{ matrix.arch }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/robotizze/DeskcommCRM
+            org.opencontainers.image.licenses=MIT
+            org.opencontainers.image.title=${{ matrix.name }}
+            org.opencontainers.image.version=${{ needs.contrato.outputs.version }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          build-args: |
+            APP_VERSION=${{ needs.contrato.outputs.version }}
+          cache-from: type=gha,scope=${{ matrix.name }}-${{ matrix.arch }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.name }}-${{ matrix.arch }}
+      - name: O aplicativo chega a servir nesta arquitetura?
+        if: matrix.name == 'aquila-imob'
+        env:
+          IMAGE: ghcr.io/robotizze/${{ matrix.name }}:build-${{ github.run_id }}-${{ matrix.arch }}
+        run: |
+          set -euo pipefail
+          trap 'docker rm -f aquila-smoke >/dev/null 2>&1 || true' EXIT
+          docker run -d --name aquila-smoke \
+            -e APP_NAME="Aquila Imob" \
+            -e NEXT_PUBLIC_SUPABASE_URL=https://example.supabase.co \
+            -e SUPABASE_SERVER_URL=http://127.0.0.1:8000 \
+            -e NEXT_PUBLIC_SUPABASE_ANON_KEY=placeholder \
+            -e SUPABASE_SERVICE_ROLE_KEY=placeholder \
+            -e SUPABASE_DB_URL=postgres://127.0.0.1:5432/postgres \
+            -e INTERNAL_SECRET=placeholder-internal-secret-32-chars \
+            -e CPF_ENCRYPTION_KEY=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= \
+            -e AI_CRED_AES_KEY=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= \
+            -e WAHA_BYO_ENCRYPTION_KEY=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= \
+            -e IMPERSONATE_COOKIE_SECRET=placeholder-cookie-secret-32-characters \
+            -e WAHA_API_BASE_URL=http://127.0.0.1:3001 \
+            -e WAHA_API_KEY=placeholder \
+            -e WAHA_WEBHOOK_BASE_URL=http://127.0.0.1:3000 \
+            -e UPSTASH_REDIS_REST_URL=http://127.0.0.1:8079 \
+            -e UPSTASH_REDIS_REST_TOKEN=placeholder \
+            -e SENTRY_DSN=off "$IMAGE"
+          for attempt in $(seq 1 40); do
+            if [ "$(docker inspect --format '{{.State.Running}}' aquila-smoke)" != "true" ]; then
+              docker logs aquila-smoke
+              exit 1
+            fi
+            if docker exec aquila-smoke node -e "require('http').get('http://127.0.0.1:3000/extensoes/catalogo.json', r => { r.resume(); process.exitCode = r.statusCode === 200 ? 0 : 1; }).on('error', () => process.exit(1));"; then
+              break
+            fi
+            if [ "$attempt" = 40 ]; then
+              docker logs aquila-smoke
+              echo "::error::O catálogo não foi servido no prazo."
+              exit 1
+            fi
+            sleep 2
+          done
+          docker exec aquila-smoke node -e '
+            const assert = require("assert/strict");
+            const { createHash } = require("crypto");
+            (async () => {
+              const base = "http://127.0.0.1:3000";
+              const response = await fetch(base + "/extensoes/catalogo.json");
+              assert.equal(response.status, 200);
+              const catalog = await response.json();
+              assert.equal(catalog.origin, "https://imob.aquila.ia.br");
+              for (const entry of catalog.entries) {
+                const artifact = await fetch(base + "/packages/" + entry.sha256 + ".json");
+                assert.equal(artifact.status, 200);
+                const bytes = Buffer.from(await artifact.arrayBuffer());
+                assert.equal(createHash("sha256").update(bytes).digest("hex"), entry.sha256);
+              }
+              const login = await fetch(base + "/login", { signal: AbortSignal.timeout(30000) });
+              assert.equal(login.status, 200);
+              assert.match(await login.text(), /Aquila Imob/);
+            })().catch(error => { console.error(error); process.exitCode = 1; });'
+
+  publicar-versao:
+    needs: [contrato, construir]
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/setup-buildx-action@v4
+      - name: Unir o trio completo sem mover uma versão já publicada
+        env:
+          VERSION: ${{ needs.contrato.outputs.version }}
+        run: |
+          set -euo pipefail
+          images=(aquila-imob aquila-imob-worker aquila-imob-scheduler)
+          for image in "${images[@]}"; do
+            if docker buildx imagetools inspect "ghcr.io/robotizze/$image:$VERSION" >/dev/null 2>&1; then
+              echo "::error::$image:$VERSION já existe. Publique uma versão inédita."
+              exit 1
+            fi
+          done
+          for image in "${images[@]}"; do
+            docker buildx imagetools create \
+              --tag "ghcr.io/robotizze/$image:$VERSION" \
+              "ghcr.io/robotizze/$image:build-$GITHUB_RUN_ID-amd64" \
+              "ghcr.io/robotizze/$image:build-$GITHUB_RUN_ID-arm64"
+          done
+          {
+            echo "## Imagens Aquila Imob publicadas"
+            for image in "${images[@]}"; do
+              echo "- ghcr.io/robotizze/$image:$VERSION — linux/amd64 e linux/arm64"
+            done
+            echo ""
+            echo "Use AQUILA_VERSION=$VERSION no complemento docker-compose.aquila.yml."
+          } >> "$GITHUB_STEP_SUMMARY"

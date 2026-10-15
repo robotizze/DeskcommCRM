@@ -1,0 +1,24 @@
+# Opcional: Supabase próprio na Hyper. Sem compartilhar bancos de outro app.
+services:
+  app:
+    environment:
+      SUPABASE_SERVER_URL: http://aquila-imob-envoy:8000
+      NEXT_PUBLIC_SUPABASE_URL: https://imob.aquila.ia.br
+    networks:
+      internal: {}
+      aquila_ingress:
+        aliases: [aquila-imob-app]
+      aquila_supabase:
+        aliases: [aquila-imob-app]
+  worker:
+    environment:
+      SUPABASE_SERVER_URL: http://aquila-imob-envoy:8000
+      NEXT_PUBLIC_SUPABASE_URL: https://imob.aquila.ia.br
+    networks:
+      internal: {}
+      aquila_supabase: {}
+
+networks:
+  aquila_supabase:
+    external: true
+    name: aquila-imob-supabase

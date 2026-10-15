@@ -623,6 +623,9 @@ jobs:
         # consultas/hora por IP — o executor próprio é um IP só.
         env:
           GH_TOKEN: ${{ github.token }}
+          # Este fork ainda não tem releases próprias da base. A comparação
+          # do update legado usa a última release oficial, obtida na API.
+          DESKCOMM_RELEASES_LATEST_URL: https://api.github.com/repos/melgarafael/DeskcommCRM/releases/latest
         run: pnpm test:db
 
       # O `update.sh` do cliente roda sobre um banco COM DADOS, e nenhum gate

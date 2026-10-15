@@ -118,6 +118,10 @@ const TEXTO_DO_MODULO: Record<ModuloOpcional, { nome: string; oQueFaz: string }>
     nome: "Honorários",
     oQueFaz: "Contratos de honorários com parcelas e o controle do que já foi pago.",
   },
+  imobiliaria: {
+    nome: "Imobiliária",
+    oQueFaz: "Carteira e captação de imóveis, interessados, corretores e visitas vinculadas à agenda.",
+  },
   // #1907 item 4 — a linha do catálogo de recursos opcionais (#1876): a
   // comanda, o caixa e as comissões. Módulo de tabela, então o `href` do mapa
   // (`MODULOS_OPCIONAIS_POR_FLAG`) já aponta para `/admin/modulos`.

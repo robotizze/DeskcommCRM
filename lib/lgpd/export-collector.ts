@@ -25,6 +25,7 @@ import { camposLegiveis, perguntasDosGrafos, type CampoLegivel } from "@/lib/lgp
 import { maskPhone } from "@/lib/lgpd/mask";
 import { phoneLookupVariants } from "@/lib/channels/phone-variants";
 import type { Json } from "@/lib/database.types";
+import { coletarImobiliaria, type ExportImobiliario } from "@/lib/imobiliaria/export";
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -655,6 +656,8 @@ export interface ExportPayload {
    */
   honorarios_contratos: HonorariosContratoRow[];
   honorarios_parcelas: HonorariosParcelaRow[];
+  /** Só aparece quando o módulo opcional possui dados deste titular; parcial é explícito. */
+  imobiliaria?: ExportImobiliario;
   orders: OrderRow[];
   activities: ActivityRow[];
   checkpoints: CheckpointRow[];
@@ -2238,7 +2241,13 @@ export async function collectExportData(args: CollectArgs): Promise<ExportPayloa
     }
   }
 
+  const imobiliaria = contactId
+    ? await coletarImobiliaria(admin, organizationId, contactId, requestId)
+    : undefined;
+  if (imobiliaria?.parcial) secoes_no_limite.push("imobiliaria");
+
   return {
+    ...(imobiliaria ? { imobiliaria } : {}),
     request_id: requestId,
     organization_id: organizationId,
     organization_legal_name: controlador.legal_name,

@@ -1,0 +1,18 @@
+# Bloco a ACRESCENTAR ao Caddy vigente, após validar e preservar cópia.
+# Para Supabase externo; nunca substitui os domínios já atendidos na Hyper.
+imob.aquila.ia.br {
+    encode zstd gzip
+    route {
+        @aquila_waha_global path /api/v1/webhooks/waha
+        respond @aquila_waha_global 403
+
+        @aquila_agentrun path /api/internal/agents/run*
+        reverse_proxy @aquila_agentrun aquila-imob-app:3000 {
+            transport http {
+                read_timeout 320s
+                write_timeout 320s
+            }
+        }
+        reverse_proxy aquila-imob-app:3000
+    }
+}

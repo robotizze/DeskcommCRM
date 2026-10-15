@@ -93,6 +93,7 @@ export const O_QUE_FICA = {
   leads: "as oportunidades abertas para ele: título, estado e valor",
   honorarios_contratos: "o contrato de honorários dele (sem a divisão interna do escritório)",
   honorarios_parcelas: "as parcelas que ele paga",
+  imobiliaria: "os imóveis de que ele é proprietário, preferências que informou e vínculos das visitas dele, com ressalva explícita de coleta parcial",
   orders: "os pedidos dele na loja",
   activities: "o que foi registrado sobre ele e quando",
   checkpoints: "o resumo que a máquina fez da conversa com ele (LGPD art. 20)",
@@ -146,6 +147,8 @@ const TEXTO_DA_IA_NO_CASO =
 
 /** Campos que saem de cada linha da seção (ou do objeto, quando a seção é um só). */
 export const CAMPOS_DA_EQUIPE: Readonly<Record<string, Readonly<Record<string, string>>>> = {
+  "imobiliaria.imoveis": { proximo_passo: "próximo passo interno da equipe na captação", proximo_contato_em: "data de retorno interno da equipe na captação" },
+  "imobiliaria.interessados": { proximo_passo: "próximo passo interno da equipe no atendimento", proximo_contato_em: "data de retorno interno da equipe" },
   honorarios_contratos: {
     repasse_advogado_pct: "quanto o escritório repassa ao advogado: divisão interna, não dado dele",
   },
@@ -349,6 +352,7 @@ function projetaLinha(secao: string, linha: Objeto, p: Projecao): Objeto {
   // Reatribuição na chave JÁ EXISTENTE não muda a posição dela no objeto — é a
   // mesma ordem que `run.tool_calls = soOQueAIaFez(...)` dava na cópia de antes.
   if (secao === "ai_agent_runs") projetada.tool_calls = soOQueAIaFez(linha.tool_calls);
+  if (secao === "imobiliaria.imoveis" && ehObjeto(linha.catalogo)) projetada.catalogo = projetaLinha("imobiliaria.catalogo", linha.catalogo, p);
   return projetada;
 }
 
@@ -379,11 +383,11 @@ function projetaSecao(secao: string, valor: unknown, p: Projecao): unknown {
     }
     return projetadas;
   }
-  if (secao === "b2b" && ehObjeto(valor)) {
+  if ((secao === "b2b" || secao === "imobiliaria") && ehObjeto(valor)) {
     const agrupada: Objeto = {};
     for (const [chave, bloco] of Object.entries(valor)) {
       if (bloco === undefined) continue;
-      agrupada[chave] = projetaSecao(`b2b.${chave}`, bloco, p);
+      agrupada[chave] = projetaSecao(`${secao}.${chave}`, bloco, p);
     }
     return agrupada;
   }

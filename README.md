@@ -1,3 +1,9 @@
+# Aquila Imob
+
+CRM imobiliário independente, baseado no [DeskcommCRM](https://github.com/melgarafael/DeskcommCRM), sob licença MIT. O app tem banco, usuários e conexões de WhatsApp próprios. Endereço previsto: **https://imob.aquila.ia.br**.
+
+O módulo Imobiliária reúne carteira de imóveis, captação, interessados, corretores e visitas vinculadas à agenda. Os quatro plugins de operação ficam no catálogo próprio. Veja o [guia de instalação e uso](docs/aquila-imob.md). O restante deste README documenta a base original.
+
 <div align="center">
 
 🇧🇷 Português · [🇺🇸 English](README.en.md) · [🇪🇸 Español](README.es.md)

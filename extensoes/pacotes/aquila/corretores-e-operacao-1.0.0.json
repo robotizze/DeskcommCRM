@@ -1,0 +1,76 @@
+{
+  "format_version": 1,
+  "profile": "declarative",
+  "publisher": "aquila",
+  "name": "corretores-e-operacao",
+  "version": "1.0.0",
+  "license": "MIT",
+  "host_api": { "min": 2, "max": 2 },
+  "permissions": ["navigation.imobiliaria", "navigation.tasks", "navigation.radar"],
+  "dependencies": [],
+  "data": { "mode": "none" },
+  "display": {
+    "title": { "pt-BR": "Corretores e operação" },
+    "summary": {
+      "pt-BR": "Organize responsáveis pela carteira, acompanhe próximos contatos e revise o que ficou sem encaminhamento."
+    },
+    "category": "productivity",
+    "icon": "BookOpen"
+  },
+  "configuration": { "density": "comfortable", "show_description": true },
+  "contributions": {
+    "crm_cards": [
+      {
+        "id": "equipe-responsavel",
+        "title": { "pt-BR": "Dê um responsável a cada atendimento" },
+        "description": {
+          "pt-BR": "Um cadastro de corretor organiza a operação; o acesso ao CRM continua sendo concedido pela administração."
+        },
+        "icon": "BookOpen",
+        "blocks": [
+          {
+            "heading": { "pt-BR": "Mantenha a carteira ligada à equipe" },
+            "body": {
+              "pt-BR": "Na área Imobiliária, vincule o corretor a um usuário que já participa da organização. Registre CRECI, regiões e especialidades e indique quando está ativo. Escolha o responsável nas fichas de imóvel, interessado e visita. Antes de desativar um corretor, repasse seus compromissos e retornos. O cadastro operacional não cria usuário nem altera permissões de acesso."
+            }
+          }
+        ],
+        "action": { "label": { "pt-BR": "Organizar corretores" }, "capability": "imobiliaria.open" }
+      },
+      {
+        "id": "rotina-do-dia",
+        "title": { "pt-BR": "Comece pelos retornos prometidos" },
+        "description": {
+          "pt-BR": "Prioridade é o compromisso assumido com a pessoa, com prazo e dono visíveis."
+        },
+        "icon": "ListChecks",
+        "blocks": [
+          {
+            "heading": { "pt-BR": "Conclua ou repasse com contexto" },
+            "body": {
+              "pt-BR": "Abra Tarefas e confira vencidas, visitas próximas e retornos de proprietários e interessados. Ao repassar, informe contato, referência do imóvel, último combinado e prazo. Ao concluir, registre o resultado. Se o contato ainda espera uma resposta, crie a próxima tarefa antes de encerrar a atual."
+            }
+          }
+        ],
+        "action": { "label": { "pt-BR": "Abrir tarefas da equipe" }, "capability": "tasks.open" }
+      },
+      {
+        "id": "revisar-parados",
+        "title": { "pt-BR": "Revise onde o atendimento parou" },
+        "description": {
+          "pt-BR": "Um indicador vale quando alguém assume uma ação a partir dele."
+        },
+        "icon": "Lightbulb",
+        "blocks": [
+          {
+            "heading": { "pt-BR": "Faça a revisão virar compromisso" },
+            "body": {
+              "pt-BR": "Use o Radar para encontrar pendências do atendimento e confira também próximos contatos vencidos na área Imobiliária. Verifique falta de opção adequada, imóvel indisponível, visita sem resultado ou retorno sem dono. Distribua tarefas com prazo e revise na reunião seguinte se foram concluídas. O pacote orienta a revisão; não atribui atendimentos nem calcula comissões automaticamente."
+            }
+          }
+        ],
+        "action": { "label": { "pt-BR": "Revisar atendimento" }, "capability": "radar.open" }
+      }
+    ]
+  }
+}

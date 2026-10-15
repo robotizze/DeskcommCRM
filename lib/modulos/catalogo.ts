@@ -15,6 +15,12 @@ export interface ModuloCatalogo {
 
 export const CATALOGO_DE_MODULOS: readonly ModuloCatalogo[] = [
   {
+    slug: "imobiliaria",
+    nome: "Imobiliária",
+    descricao:
+      "Carteira de imóveis, captação, qualificação de interessados e corretores, com visitas ligadas à agenda do atendimento.",
+  },
+  {
     slug: "honorarios",
     nome: "Honorários (advocacia)",
     descricao:

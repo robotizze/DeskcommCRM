@@ -1,0 +1,17 @@
+# Aquila Hyper já tem Caddy atendendo 80/443. Aplicar DEPOIS de prod + aquila.
+# A rede nova contém apenas o app Aquila e o proxy existente, sem Redis/WAHA.
+services:
+  app:
+    networks:
+      internal: {}
+      aquila_ingress:
+        aliases: [aquila-imob-app]
+    ports:
+      - "127.0.0.1:${AQUILA_APP_LOOPBACK_PORT:-13000}:3000"
+  caddy:
+    profiles: ["aquila-caddy-proprio-desligado"]
+
+networks:
+  aquila_ingress:
+    external: true
+    name: aquila-imob-ingress

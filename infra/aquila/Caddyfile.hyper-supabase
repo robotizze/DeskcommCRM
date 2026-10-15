@@ -1,0 +1,21 @@
+# Bloco a ACRESCENTAR ao Caddy vigente; alternativa a Caddyfile.hyper-app.
+# Supabase próprio: navegador alcança só seis superfícies da API, sem Studio.
+imob.aquila.ia.br {
+    encode zstd gzip
+    route {
+        @aquila_waha_global path /api/v1/webhooks/waha
+        respond @aquila_waha_global 403
+
+        @aquila_supabase path /auth/v1* /rest/v1* /realtime/v1* /storage/v1* /functions/v1* /graphql/v1*
+        reverse_proxy @aquila_supabase aquila-imob-envoy:8000
+
+        @aquila_agentrun path /api/internal/agents/run*
+        reverse_proxy @aquila_agentrun aquila-imob-app:3000 {
+            transport http {
+                read_timeout 320s
+                write_timeout 320s
+            }
+        }
+        reverse_proxy aquila-imob-app:3000
+    }
+}

@@ -13,6 +13,8 @@
 import { test, expect } from "./helpers/test";
 
 import { waitForEmail, extractAuthConfirmLink, seguirLinkDeAcesso, uniqueEmail } from "./helpers/auth";
+import { resolveBranding } from "../../lib/branding";
+import { env } from "../../lib/env";
 
 test("criar conta: signup → e-mail de confirmação → onboarding → re-login", async ({
   page,
@@ -43,7 +45,8 @@ test("criar conta: signup → e-mail de confirmação → onboarding → re-logi
 
   // 4. Autenticado no onboarding — tenant provisionado
   await expect(page).toHaveURL(/\/onboarding\/welcome/);
-  await expect(page.getByText("Boas-vindas ao DeskcommCRM")).toBeVisible();
+  const nomeDoSistema = resolveBranding(env.APP_NAME, null).name;
+  await expect(page.getByRole("heading", { name: `Boas-vindas ao ${nomeDoSistema}`, exact: true })).toBeVisible();
   await expect(page.getByText("Loja E2E Signup")).toBeVisible();
 
   // 5. Sai (limpa sessão) e entra de novo com as credenciais criadas
