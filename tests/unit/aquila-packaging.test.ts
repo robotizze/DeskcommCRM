@@ -71,6 +71,9 @@ describe("distribuição própria do Aquila Imob", () => {
     expect(installer).toContain("public.fn_modulo_instalar(v_actor, v_op, 'imobiliaria')");
     expect(installer).toContain("690080884040e238926ba22606e8c05a3536829b");
     expect(installer).toContain("--skip-deps --ref self-hosted/v0.8.1");
+    expect(installer).toContain("f6724c97f1ca555b700f5ecf630e8a2e5114682b64ca94158061326187139183");
+    expect(installer).toContain("2cada25b2bcd5b52eb6c6d4cd5de8c0adeb2a7433ffe701991dd24ec13ca618a");
+    expect(installer).toContain("'.runtime/supabase/docker-compose.yml.old'");
     expect(installer).not.toMatch(
       /\bbash install\.sh|\bdown -v|\bcaddy reload|\bsystemctl|\bapt-get/,
     );

@@ -77,6 +77,7 @@ import * as zlib from "node:zlib";
 import { test, expect, type Page, type Locator } from "./helpers/test";
 
 import { generateTotp, msUntilNextTotpWindow } from "./utils/totp";
+import { DEFAULT_APP_NAME } from "../../lib/branding";
 
 const CREDS_PATH = path.join(process.cwd(), ".e2e-creds.json");
 const EVIDENCIA = path.join(process.cwd(), "evidence", "logo-moldura-tema-escuro");
@@ -348,6 +349,12 @@ async function removerLogoSeHouver(page: Page, tela: string, escopo: Escopo): Pr
   }
 }
 
+async function salvarNomeDaInstalacao(page: Page, nome: string): Promise<void> {
+  await page.getByLabel("Nome do sistema", { exact: true }).fill(nome);
+  await page.getByRole("button", { name: "Salvar", exact: true }).click();
+  await expect(page.getByText("Marca salva.", { exact: true })).toBeVisible();
+}
+
 function evidencia(nome: string): string {
   fs.mkdirSync(EVIDENCIA, { recursive: true });
   return path.join(EVIDENCIA, nome);
@@ -376,6 +383,7 @@ async function medirCaixa(alvo: Locator): Promise<Caixa> {
 test.describe.configure({ mode: "serial" });
 
 test.describe("a moldura do logo no tema escuro", () => {
+  let nomeAnteriorDaInstalacao: string | undefined;
   // Cada caso faz o próprio login: `mode: "serial"` encadeia ORDEM e estado do
   // BANCO, não a sessão do navegador (as fixtures `page`/`context` são de escopo
   // de teste). Ver o comentário longo em `marca-logo.spec.ts`.
@@ -519,6 +527,10 @@ test.describe("a moldura do logo no tema escuro", () => {
     // Tira o logo enviado: sem ele, e com o nome padrão, a barra cai no ramo
     // `marcaDoProduto` — o `<svg>` inline desenhado para os dois temas.
     await removerLogoSeHouver(page, "/admin/marca", "instalacao");
+    // A instalação pode ter nome próprio no ambiente. Este caso mede a arte
+    // canônica do produto, então estabelece e depois restaura essa precondição.
+    nomeAnteriorDaInstalacao = await page.getByLabel("Nome do sistema", { exact: true }).inputValue();
+    await salvarNomeDaInstalacao(page, DEFAULT_APP_NAME);
 
     await page.goto("/app/inbox");
     await escolherTemaPelaTela(page, "dark");
@@ -530,7 +542,7 @@ test.describe("a moldura do logo no tema escuro", () => {
       "ainda há um <img> na barra — o logo enviado não foi removido, e o caso mediria outra coisa",
     ).toHaveCount(0, { timeout: 15_000 });
 
-    const marca = barra.getByRole("img", { name: "DeskcommCRM" });
+    const marca = barra.getByRole("img", { name: DEFAULT_APP_NAME, exact: true });
     await expect(
       marca,
       "a barra não caiu no ramo `marcaDoProduto` — sem ele não há fronteira para medir",
@@ -686,6 +698,9 @@ test.describe("a moldura do logo no tema escuro", () => {
       const pagina = await contexto.newPage();
       await loginComTotp(pagina, creds.users.dono!.email, secret());
       await removerLogoSeHouver(pagina, "/admin/marca", "instalacao");
+      if (nomeAnteriorDaInstalacao !== undefined) {
+        await salvarNomeDaInstalacao(pagina, nomeAnteriorDaInstalacao);
+      }
     } finally {
       await contexto.close();
     }

@@ -154,6 +154,30 @@ beforeAll(() => {
  * arquivo tem de EXISTIR: exceção que aponta para teste que sumiu não prova nada.
  */
 const PROVA_DE_MODULO: Record<string, { readonly arquivo: string; readonly razao: string }> = {
+  imob_corretores: {
+    arquivo: "tests/invariants/imobiliaria-isolamento.test.ts",
+    razao:
+      "JWT real: agent não altera CRECI e viewer não altera patrimônio; broker está ligado " +
+      "à membership da mesma organização por FK composta, sem acesso de anon às tabelas.",
+  },
+  imob_imoveis: {
+    arquivo: "tests/invariants/imobiliaria-isolamento.test.ts",
+    razao:
+      "Viewer conta apenas imóvel da própria organização, não altera; agent não altera, " +
+      "manager edita e a FK composta recusa proprietário pertencente a outra organização.",
+  },
+  imob_interessados: {
+    arquivo: "tests/invariants/imobiliaria-isolamento.test.ts",
+    razao:
+      "Agent atualiza próximo passo com JWT real; dados do contato e vínculos preservam " +
+      "a organização por FK composta. Anon não tem privilégios nas tabelas do módulo.",
+  },
+  imob_visitas: {
+    arquivo: "tests/invariants/imobiliaria-isolamento.test.ts",
+    razao:
+      "Agent vincula visita com JWT real; inserir imóvel ou agenda de outra organização " +
+      "é recusado pelo banco, assim como vínculo duplicado, imóvel inativo e agenda cancelada.",
+  },
   honorarios_contratos: {
     arquivo: "tests/invariants/honorarios-rls-por-operacao.test.ts",
     razao:

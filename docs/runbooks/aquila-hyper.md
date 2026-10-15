@@ -72,7 +72,9 @@ instalação Supabase feita na Hyper.
 
 O script confere também o commit oficial
 `690080884040e238926ba22606e8c05a3536829b`, o SHA-256 do setup e o do compose
-revisado. Os onze serviços oficiais têm imagens com versão explícita; analytics
+revisado, tanto o original `.old` quanto o gerado pelo setup. O helper oficial
+de chaves habilita quatro campos JWT no compose; esse resultado tem outro
+SHA-256 fixado, sem aceitar alterações arbitrárias. Os onze serviços oficiais têm imagens com versão explícita; analytics
 e proxy próprio não são acrescentados. O setup oficial só prepara arquivos,
 gera chaves e baixa imagens. Não iniciar seu compose sem o override.
 

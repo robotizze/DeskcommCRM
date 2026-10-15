@@ -141,6 +141,10 @@ beforeAll(async () => {
   // `relation "sales" does not exist` e este arquivo inteiro cai por um módulo que não é o
   // assunto dele (o assunto é agenda/Meet no relatório do titular).
   await pool.query("select public.fn_financeiro_provisionar();");
+  // O coletor também lê o módulo imobiliário opcional. Nesta ponte pg, erros SQL
+  // são lançados (não chegam como envelope Supabase); a prova D8 exige os módulos
+  // instalados antes da leitura, como já ocorre com a comanda acima.
+  await pool.query("select public.fn_imobiliaria_provisionar();");
   vi.mocked(createAdminClient).mockReturnValue({
     from: (table: string) => new ReadQuery(table),
   } as never);

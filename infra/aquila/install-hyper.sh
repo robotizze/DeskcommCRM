@@ -91,8 +91,13 @@ if [[ ! -f .runtime/supabase/.env ]]; then
   # diretório pai .runtime continua 700; a .env será explicitamente 600.
   (umask 022; sh .runtime/supabase-setup.sh -y --skip-deps --ref self-hosted/v0.8.1 --project-dir .runtime/supabase) >> "$LOG" 2>&1
 fi
-printf '%s  %s\n' 'f6724c97f1ca555b700f5ecf630e8a2e5114682b64ca94158061326187139183' '.runtime/supabase/docker-compose.yml' \
-  | sha256sum --check --status || die 'Compose oficial divergiu da referência revisada.'
+# O setup oficial add-new-auth-keys.sh guarda a origem em .old e habilita
+# quatro campos JWT no compose gerado. Os dois snapshots são fixados: não
+# aceitar o hash do arquivo cru como se ainda fosse o resultado do setup.
+printf '%s  %s\n' 'f6724c97f1ca555b700f5ecf630e8a2e5114682b64ca94158061326187139183' '.runtime/supabase/docker-compose.yml.old' \
+  | sha256sum --check --status || die 'Compose original divergiu da referência revisada.'
+printf '%s  %s\n' '2cada25b2bcd5b52eb6c6d4cd5de8c0adeb2a7433ffe701991dd24ec13ca618a' '.runtime/supabase/docker-compose.yml' \
+  | sha256sum --check --status || die 'Compose gerado pelo setup oficial divergiu do snapshot revisado.'
 cp infra/aquila/supabase-hyper.override.yml .runtime/supabase/supabase-hyper.override.yml
 python3 infra/aquila/prepare-hyper-env.py --root "$ROOT" --version "$VERSION" --owner-email "$OWNER_EMAIL" >> "$LOG" 2>&1
 ensure_network aquila-imob-ingress
