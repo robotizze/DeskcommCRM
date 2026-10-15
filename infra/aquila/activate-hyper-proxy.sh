@@ -66,7 +66,14 @@ candidate+='\n  aquila_imob_ingress:\n    external: true\n    name: aquila-imob-
 PY
 COMPOSE=(docker compose --project-directory "$CONFIG" -p aquila3 --env-file "$CONFIG/.env.hyper" \
   -f "$CONFIG/compose.yaml" -f "$CONFIG/compose.hyper.yaml" -f "$CONFIG/compose.pur.yaml")
-"${COMPOSE[@]}" -f "$BACKUP/compose.public.candidate.yaml" config --quiet >> "$LOG" 2>&1
+validate_compose() {
+  # A composição completa inclui builds alheios ao proxy; valida sua estrutura
+  # sem exigir credenciais desses builds e resolve integralmente o serviço alterado.
+  "${COMPOSE[@]}" -f "$1" config --no-interpolate --quiet >> "$LOG" 2>&1
+  docker compose --project-directory "$CONFIG" -p aquila3 --env-file "$CONFIG/.env.hyper" \
+    -f "$1" config --quiet >> "$LOG" 2>&1
+}
+validate_compose "$BACKUP/compose.public.candidate.yaml"
 docker cp "$BACKUP/Caddyfile.candidate" "$PROXY:/tmp/aquila-imob-Caddyfile" >> "$LOG" 2>&1
 docker exec "$PROXY" caddy validate --config /tmp/aquila-imob-Caddyfile --adapter caddyfile >> "$LOG" 2>&1
 CONNECTED=0
@@ -100,7 +107,7 @@ fi
 CHANGED=1
 restore_file "$BACKUP/compose.public.candidate.yaml" "$PUBLIC_COMPOSE"
 restore_file "$BACKUP/Caddyfile.candidate" "$CADDYFILE"
-"${COMPOSE[@]}" -f "$PUBLIC_COMPOSE" config --quiet >> "$LOG" 2>&1
+validate_compose "$PUBLIC_COMPOSE"
 docker exec "$PROXY" caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile >> "$LOG" 2>&1
 docker exec "$PROXY" caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile >> "$LOG" 2>&1
 for domain in "${DOMAINS[@]}"; do

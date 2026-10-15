@@ -108,7 +108,7 @@ instalados; não instala dependências globais nem reinicia Docker.
 ```bash
 cd /srv/aquila/imob
 bash infra/aquila/install-hyper.sh --plan
-sudo bash infra/aquila/install-hyper.sh --apply --version 0.1.0 --owner-email superadmin@robotizze.us
+sudo bash infra/aquila/install-hyper.sh --apply --version 0.1.1 --owner-email superadmin@robotizze.us
 ```
 
 `--plan` apenas descreve o procedimento. Após revisão, `--apply` verifica e
@@ -180,12 +180,42 @@ sudo bash infra/aquila/activate-hyper-proxy.sh --apply
 
 Ele lê os quatro arquivos Compose vigentes em
 `/home/newxai9_gmail_com/aquila3/config`, com `.env.hyper`; não imprime o ambiente
-resolvido. Guarda backups privados, valida os dois candidatos antes de tocar
+resolvido. Confere a estrutura dos quatro arquivos com `--no-interpolate` e
+resolve integralmente `compose.public.yaml`, que contém o serviço alterado e
+suas redes. Isso evita exigir chaves de builds de outros aplicativos para uma
+recarga do proxy; não usa valores fictícios. Guarda backups privados, valida os dois candidatos antes de tocar
 arquivos ativos, persiste a rede nova em `compose.public.yaml` e recarrega o
 Caddy. Mantém o inode do Caddyfile, por causa do bind mount. Se a recarga ou a
 comparação dos quatro domínios falhar, restaura os arquivos e recarrega a
 configuração anterior. Não recria o proxy nem os containers existentes. A
 emissão do certificado e a prova do novo HTTPS seguem a configuração do DNS.
+
+## Publicação medida na Hyper — 15/10/2026
+
+Aquila `0.1.1`, imagens do fork na revisão
+`e67c4791621b0ffa0167e950cf0b547e1222beae`, foi instalado em
+`/srv/aquila/imob` com os projetos `aquila-imob` e `aquila-imob-supabase`.
+App, worker, scheduler e banco passaram nas verificações de saúde. O domínio
+`https://imob.aquila.ia.br` responde com certificado válido, login e catálogo
+HTTP 200. O login pela tela do dono criado no bootstrap levou às boas-vindas.
+
+O proxy vigente recebeu somente o novo bloco e a rede própria; os quatro
+domínios anteriores conservaram seus códigos HTTP e os containers conservaram
+os mesmos IDs. A validação usou a estrutura completa dos quatro arquivos e a
+resolução integral do arquivo do proxy, seguida de `caddy validate` e recarga.
+Esta correção do procedimento foi aplicada como cópia revisada privada em
+`.runtime/activate-proxy-reviewed.sh`, sem mudar a revisão das imagens instaladas.
+
+Às 18:38 UTC, as APIs nativas confirmaram os quatro pacotes Aquila `1.0.0`
+instalados, habilitados e compatíveis na empresa inicial: carteira e captação,
+corretores e operação, interessados e qualificação, visitas e retornos. Foram
+conferidos os hashes públicos e as doze contribuições de cards. Recibos,
+credenciais e identificação da empresa ficam nos arquivos privados, fora do Git.
+
+As boas-vindas permanecem pendentes para o dono confirmar negócio/fuso e aceitar
+os termos. O pareamento WhatsApp exige seu celular. IA é opcional; envio e
+recuperação por e-mail ainda exigem configurar SMTP no produto e no Auth.
+Nenhum termo foi aceito nem mensagem WhatsApp enviada durante essa publicação.
 
 ## Provar e recuperar
 
